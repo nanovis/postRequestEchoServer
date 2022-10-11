@@ -1,0 +1,27 @@
+{
+	"model": "testTriangle",
+	"version": 0.1,
+	"filename": "testTriangle.obj",
+	"mesh": {
+		"name": "testName",
+		"vertices": [
+			[0.0, 0.0, 0.0],
+			[1.0, 0.0, 0.0],
+			[0.0, 1.0, 0.0]
+		],
+		"normals": [
+			[0.0, 0.0, 1.0],
+			[0.0, 0.0, 1.0],
+			[0.0, 0.0, 1.0]
+		],
+		"indices": [0, 1, 2]
+	},
+	"spikes": [
+		{
+			"spikeId": 1,
+			"spikeCenter": [0.0, 0.0, 0.0],
+			"spikeNormal": [1.0, 0.0, 0.0]
+		}
+	],
+	"timestamp": 1665302336
+}
