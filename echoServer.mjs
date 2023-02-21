@@ -20,13 +20,27 @@ function getDate()
     let d = new Date();
 
     let day = d.getDate();    
-    let month = d.getMonth();        
+    let month = d.getMonth() + 1;        
     let year = d.getFullYear();
     let hours = d.getHours();
     let minutes = d.getMinutes();
     let seconds = d.getSeconds();
+    let mseconds = d.getMilliseconds();
     
-    return "" + year + month + day + hours + minutes + seconds;
+    return "" + 
+    year + 
+    "-" + 
+    month.toString().padStart(2, '0') + 
+    "-" + 
+    day.toString().padStart(2, '0') + 
+    "-" +
+    hours.toString().padStart(2, '0') + 
+    "-" + 
+    minutes.toString().padStart(2, '0') + 
+    "-" + 
+    seconds.toString().padStart(2, '0') + 
+    "-" + 
+    mseconds.toString().padStart(3, '0');
 }
 
 app.use(express.static('static'));
@@ -101,6 +115,54 @@ app.post('/', function (req, res) {
 
   newRequest = true;
   res.send(req.body);
+});
+
+app.post('/command', function (req, res) {
+  console.log(req.body);
+  res = res.status(200);
+  if (req.get('Content-Type')) {
+    console.log("Content-Type: " + req.get('Content-Type'));
+    res = res.type(req.get('Content-Type'));
+  }
+  latestRequest = req.body;
+
+  fs.writeFile("commands/command_" + getDate() + ".json", JSON.stringify(req.body), function(err) {
+    if(err) {
+        return console.log(err);
+    }    
+    }); 
+
+  res.send(req.body);
+});
+
+app.get('/response', function (req, res) {
+  
+  res = res.status(200);
+  if (req.get('Content-Type')) {
+    console.log("Content-Type: " + req.get('Content-Type'));
+    res = res.type(req.get('Content-Type'));
+  }
+  
+  var found = false;
+  fs.readdirSync("commands").forEach(file => {
+    if(!found && file.includes("_response.json")) {
+      found = true;
+      console.log(file);
+       var data = fs.readFileSync("commands/" + file);
+
+       res.write(data);  
+       
+       fs.rename("commands/" + file, "commands/" + file.replace("_response.json", "_response_processed.json"), function (err) {
+          if (err) throw err;          
+      });
+    }
+  });
+
+  if(!found) {
+    res.write(JSON.stringify({ "type": "empty" }));
+  }
+
+  res.send();
 });
 
 app.listen(port, () => {
