@@ -71,6 +71,7 @@ app.get('/events', async (req, res) => {
 });
 
 app.get('/posts', async (req, res) => {    
+
     fs.readdir("posts", (err, files) => {
         var obj = {};
         obj.count = files.length;
@@ -82,7 +83,6 @@ app.get('/posts', async (req, res) => {
           
           const content = fs.readFileSync("posts/" + file, {encoding:'utf8', flag:'r'});
           obj.files.push(content);
-
         });
 
         var strres = JSON.stringify(obj);
@@ -96,10 +96,12 @@ app.get('/posts', async (req, res) => {
 
         res.write(strres);
       });
+
 });
 
 app.post('/', function (req, res) {
-  console.log(req.body);
+  //console.log(req.body);
+
   res = res.status(200);
   if (req.get('Content-Type')) {
     console.log("Content-Type: " + req.get('Content-Type'));
@@ -107,13 +109,50 @@ app.post('/', function (req, res) {
   }
   latestRequest = req.body;
 
-  fs.writeFile("posts/post_" + getDate() + ".json", JSON.stringify(req.body), function(err) {
+  fs.writeFile("posts/" + getDate() + "_post.json", JSON.stringify(req.body), function(err) {
     if(err) {
         return console.log(err);
     }    
     }); 
+    
+  if(req.body.triangles && req.body.vertices) {        
+
+    var stream = fs.createWriteStream("posts/" + getDate() + "_" + req.body.name + ".obj");
+
+    for (let i = 0; i < req.body.vertices.length; i+=3) {
+      stream.write("v ");
+      stream.write(req.body.vertices[i + 0].toString());
+      stream.write(" ");
+      stream.write(req.body.vertices[i + 1].toString());
+      stream.write(" ");
+      stream.write(req.body.vertices[i + 2].toString());
+      stream.write("\n");
+    }
+
+    stream.write("\n");
+
+    for (let i = 0; i < req.body.triangles.length; i+=3) {
+      stream.write("f ");
+      stream.write((req.body.triangles[i + 0] + 1).toString());
+      stream.write(" ");
+      stream.write((req.body.triangles[i + 1] + 1).toString());
+      stream.write(" ");
+      stream.write((req.body.triangles[i + 2] + 1).toString());
+      stream.write("\n");
+    }
+    stream.close();
+
+    /*
+    fs.writeFile(, data, function(err) {
+      if(err) {
+          return console.log(err);
+      }    
+      }); 
+    */
+  }
 
   newRequest = true;
+
   res.send(req.body);
 });
 
