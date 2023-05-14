@@ -10,6 +10,7 @@ const port = argv[2] || 8081;
 var newRequest = false;
 var latestRequest = {};
 
+app.use(express.json({limit: '200mb'}));
 app.use(express.urlencoded({ extended: true }));
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json())
