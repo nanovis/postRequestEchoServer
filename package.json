@@ -4,6 +4,7 @@
     "description": "",
     "main": "echoServer.mjs",
     "scripts": {
+        "start": "nodemon echoServer.mjs",
         "test": "echo \"Error: no test specified\" && exit 1"
     },
     "author": "",

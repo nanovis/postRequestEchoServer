@@ -1,0 +1,7 @@
+{
+    "verbose": true,
+    "execMap": {
+        "node": "node echoServer.mjs"
+    },
+    "ignore": ["commands/*", "posts/*"]
+  }
